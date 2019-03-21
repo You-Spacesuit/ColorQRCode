@@ -9,7 +9,7 @@ self.onmessage = function (event) {
     const code = jsQR(imageData, width, height);
     let sendData = {
         num: event.data.num,
-        text: null
+        text: ""
     }
     if (code) {
         let text_decoder = new TextDecoder("shift_jis");
