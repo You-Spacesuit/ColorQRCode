@@ -19,31 +19,33 @@
     <!-- CDN -->
     <script src="//code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/vue@2.6.7/dist/vue.min.js"></script>
-    <!-- LIB -->
-    <script src="./lib/encoding.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/encoding-japanese/1.0.29/encoding.min.js"></script>
 
     <!-- MINE -->
     <script src="./js/jsColorQR.js"></script>
 </head>
 
 <body>
+    <!--  <img src="../img/ColorQR3.png" id="ColorQR">
+   -->
     <div>
-        <!--
-            <img src="../img/ColorQR3.png" id="QRImage">
-        -->
         <video id="camera" autoplay="1"></video>
         <canvas id="QRImage"></canvas>
     </div>
+
     <input type="button" value="READ" onclick="read()">
-    <div id="sepalationQR"></div>
 
     <script>
         // ---カメラの設定----------------------
-        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || window.navigator.mozGetUserMedia;
+        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || window.navigator
+            .mozGetUserMedia;
         window.URL = window.URL || window.webkitURL;
         var video = document.getElementById('camera');
         var localStream = null;
-        navigator.getUserMedia({ video: true, audio: false },
+        navigator.getUserMedia({
+                video: true,
+                audio: false
+            },
             function (stream) { // for success case
                 console.log(stream);
                 // Chromeでバグがあるとかないとか
@@ -68,6 +70,8 @@
         });
 
         // Canvasに出力
+        const fps = 1000 / 60;
+
         function outputVideo(width, height) {
             var video = document.getElementById("camera");
             setInterval(function () {
@@ -76,25 +80,34 @@
                 canvas.setAttribute("width", width);
                 canvas.setAttribute("height", height);
                 canvas.getContext("2d").drawImage(video, 0, 0, width, height);
-            }, 1000 / 60);
+            }, fps);
         }
 
-        // ---QRコード読み込みの設定----------------------
+        // --- QRコード読み込みの設定----------------------
         setInterval(function () {
             read();
-        }, 1000);
+        }, 200);
+        // read();
         function read() {
+            // console.log('read');
+            // const imageData = createImageData(document.getElementById('ColorQR'));
             const canvas = document.getElementById('QRImage');
             const imageData = canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height);
-            // const imageData = getImageData(document.getElementById('QRImage'));
-            var colorQR = new jsColorQR($("#sepalationQR"), 255, 0, true);
-            var readData = colorQR.readRGBCode(imageData, function (result) {
-                if (result) {
-                    console.log("Found QR code:\n", result);
-                    alert("Found QR code:\n" + result);
+            let colorQR = new jsColorQR($("#sepalationQR"));
+            let readData = colorQR.readRGBCode(imageData, function (result) {
+                if (result.success) {
+                    // console.log(result);
+                    let text = "";
+                    for (let i = 0; i < result.text.length; i++) {
+                        text += result.text[i];
+                    }
+                    console.log("Found QR code:\n", text);
+                    alert("Found QR code:\n" + text);
                 } else {
                     console.log("not Found.");
                 }
+                // console.timeEnd('read');
+                // read();
             });
         }
 
@@ -108,7 +121,15 @@
             return data;
         }
 
-
+        function createImageData(img) {
+            var cv = document.createElement('canvas');
+            cv.width = img.naturalWidth;
+            cv.height = img.naturalHeight;
+            var ct = cv.getContext('2d');
+            ct.drawImage(img, 0, 0);
+            var data = ct.getImageData(0, 0, cv.width, cv.height);
+            return data;
+        }
     </script>
 
 
