@@ -1,5 +1,5 @@
 # ColorQRCode
-[Demo](https://ecstatic-snyder-30c952.netlify.com)
+[Demo](https://color-qr-code.netlify.com/)
 
 # LISENCE
 MIT  
